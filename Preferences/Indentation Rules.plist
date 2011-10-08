@@ -31,6 +31,25 @@
 	</string>
 		<key>unIndentedLinePattern</key>
 		<string>^\s*((/\*|\*/|//|#|template\b.*?&gt;(?!\(.*\))|@protocol|@optional|@interface(?!.*\{)|@implementation|@end).*)?$</string>
+		<key>indentExpression</key>
+		<string>
+;
+; the code should return the absolute amount of whitespace to use for the current line
+; return a negative number to use default indentation rules
+;
+(set text (current-text))
+(set lineRange ((text textStorage) rangeOfLineAtLocation:(text caret)))
+(set scope ((current-document) scopeAtLocation:(lineRange first)))
+(cond
+	((scope match:"(source.c $ | source.c++ $ | source.objc $ | source.objc++ $ | meta.function.c - meta.block.c)")
+		0)
+	((/^\s*\{\}$/ findInString:(text line))
+		(text lengthOfIndentAtLocation:(- (lineRange first) 1)))
+	((/^\s*#/ findInString:(text line))
+		0)
+	(else -1)
+)
+		</string>
 	</dict>
 	<key>uuid</key>
 	<string>02EB44C6-9203-4F4C-BFCB-7E3360B12812</string>
